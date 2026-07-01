@@ -140,11 +140,27 @@ Visit the **[Live Demo](https://smart-tripplanner.netlify.app)** to use the app 
 
 ## Local Configuration
 
-Some features in `trip-planner.html` need external service credentials configured on your machine.
+Some features in `trip-planner.html` need API credentials on your machine.
 
 1. Copy `js/config.example.js` to `js/config.js`
-2. Add your own credentials in the local `js/config.js` file
-3. Never commit `js/config.js` — it is already listed in `.gitignore`
+2. Add your credentials in the local `js/config.js` file
+3. Never commit `js/config.js` — it is listed in `.gitignore`
+
+### Netlify Deployment
+
+The live site builds `js/config.js` automatically from environment variables. In your [Netlify site settings](https://app.netlify.com/) go to **Site configuration → Environment variables** and add:
+
+| Variable | Description |
+|----------|-------------|
+| `GOOGLE_API_KEY` | Google Maps / Places API key |
+| `WEATHER_API_KEY` | OpenWeatherMap API key |
+
+Restrict your Google key to HTTP referrers, for example:
+
+- `https://smart-tripplanner.netlify.app/*`
+- `http://localhost:*`
+
+After saving the variables, trigger a **new deploy** so the build can generate `js/config.js`.
 
 ---
 

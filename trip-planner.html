@@ -754,6 +754,47 @@
         const WEATHER_API_KEY = window.API_CONFIG?.WEATHER_API_KEY || '';
         const WEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
+        function waitForGoogleMaps(timeoutMs = 15000) {
+            return new Promise((resolve) => {
+                if (googleMapsLoaded && placesService && geocoder) {
+                    resolve(true);
+                    return;
+                }
+
+                const start = Date.now();
+                const interval = setInterval(() => {
+                    if (googleMapsLoaded && placesService && geocoder) {
+                        clearInterval(interval);
+                        resolve(true);
+                    } else if (Date.now() - start >= timeoutMs) {
+                        clearInterval(interval);
+                        console.warn('Google Maps API load timed out');
+                        resolve(false);
+                    }
+                }, 100);
+            });
+        }
+
+        function placesTextSearch(request) {
+            return new Promise((resolve) => {
+                if (!placesService) {
+                    resolve([]);
+                    return;
+                }
+
+                placesService.textSearch(request, (results, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && results?.length) {
+                        resolve(results);
+                    } else {
+                        if (status !== google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+                            console.warn('Places search status:', status, request.query);
+                        }
+                        resolve([]);
+                    }
+                });
+            });
+        }
+
         // Google Maps services are now initialized in global scope above
 
         // Form submission and AI itinerary generation
@@ -790,38 +831,39 @@
                 const shoppingBudget = parseInt(document.getElementById('shoppingBudget').value);
                 const miscBudget = parseInt(document.getElementById('miscBudget').value);
 
-                // Prepare API calls array
-                const apiCalls = [
-                    getHotels(destination, stayBudget),
-                    getRestaurants(destination, foodBudget),
-                    getAttractions(destination, tripType, activitiesBudget),
-                    getWeatherForecast(destination, startDate, endDate)
-                ];
+                // Wait for Google Maps JS API (browser-safe; REST Places API blocks CORS)
+                const mapsReady = Boolean(GOOGLE_API_KEY) && await waitForGoogleMaps();
 
-                // Add traffic analysis if enabled
-                if (enableTrafficAnalysis && startingPoint && departureTime) {
-                    apiCalls.push(getHistoricalTrafficData(startingPoint, destination, departureTime));
+                const weatherPromise = getWeatherForecast(destination, startDate, endDate);
+                const trafficPromise = (enableTrafficAnalysis && startingPoint && departureTime && mapsReady)
+                    ? getHistoricalTrafficData(startingPoint, destination, departureTime)
+                    : Promise.resolve(null);
+
+                let hotels;
+                let restaurants;
+                let attractions;
+                let weatherData;
+                let trafficData;
+
+                if (mapsReady) {
+                    [hotels, restaurants, attractions, weatherData, trafficData] = await Promise.all([
+                        getHotels(destination, stayBudget),
+                        getRestaurants(destination, foodBudget),
+                        getAttractions(destination, tripType, activitiesBudget),
+                        weatherPromise,
+                        trafficPromise
+                    ]);
                 } else {
-                    apiCalls.push(Promise.resolve(null));
+                    if (!GOOGLE_API_KEY) {
+                        console.warn('⚠️ API config missing — add keys to js/config.js locally or Netlify env vars');
+                    } else {
+                        console.warn('⚠️ Google Maps not loaded — using sample place data');
+                    }
+                    [weatherData, trafficData] = await Promise.all([weatherPromise, trafficPromise]);
+                    hotels = getSampleHotels(destination, stayBudget);
+                    restaurants = getSampleRestaurants(destination, foodBudget);
+                    attractions = getSampleAttractions(destination, tripType);
                 }
-
-                // Note: Using sample data due to CORS restrictions with REST APIs
-                // In production, these would be called from a backend server
-                console.log('⚠️ Using sample data due to browser CORS restrictions');
-                
-                // Get weather data (this should work as it's a different API)
-                const weatherData = await getWeatherForecast(destination, startDate, endDate);
-                
-                // Get traffic data if enabled (using JavaScript API)
-                let trafficData = null;
-                if (enableTrafficAnalysis && startingPoint && departureTime) {
-                    trafficData = await getHistoricalTrafficData(startingPoint, destination, departureTime);
-                }
-                
-                // Use sample data for places (avoiding CORS issues)
-                const hotels = getSampleHotels(destination, stayBudget);
-                const restaurants = getSampleRestaurants(destination, foodBudget);
-                const attractions = getSampleAttractions(destination, tripType);
 
                 console.log('API Results:', { hotels, restaurants, attractions, weatherData, trafficData });
 
@@ -888,15 +930,13 @@
             
             for (const query of searchQueries) {
                 try {
-                    const url = `${GOOGLE_PLACES_BASE_URL}/textsearch/json?query=${encodeURIComponent(query)}&type=lodging&key=${GOOGLE_API_KEY}&maxresults=20`;
-                    const response = await fetch(url);
-                    const data = await response.json();
+                    const results = await placesTextSearch({ query, type: 'lodging' });
                     
-                    console.log(`Hotel search for "${query}":`, data);
+                    console.log(`Hotel search for "${query}":`, results.length, 'results');
                     
-                    if (data.status === 'OK' && data.results.length > 0) {
+                    if (results.length > 0) {
                         // Filter by budget AND rating
-                        const budgetFiltered = data.results
+                        const budgetFiltered = results
                             .filter(place => {
                                 const priceLevel = place.price_level || 2;
                                 const rating = place.rating || 0;
@@ -953,15 +993,13 @@
             
             for (const query of searchQueries) {
                 try {
-                    const url = `${GOOGLE_PLACES_BASE_URL}/textsearch/json?query=${encodeURIComponent(query)}&type=restaurant&key=${GOOGLE_API_KEY}&maxresults=20`;
-                    const response = await fetch(url);
-                    const data = await response.json();
+                    const results = await placesTextSearch({ query, type: 'restaurant' });
                     
-                    console.log(`Restaurant search for "${query}":`, data);
+                    console.log(`Restaurant search for "${query}":`, results.length, 'results');
                     
-                    if (data.status === 'OK' && data.results.length > 0) {
+                    if (results.length > 0) {
                         // Filter by budget AND rating
-                        const budgetFiltered = data.results
+                        const budgetFiltered = results
                             .filter(place => {
                                 const priceLevel = place.price_level || 2;
                                 const rating = place.rating || 0;
@@ -1041,14 +1079,12 @@
             
             for (const query of searchQueries) {
                 try {
-                    const url = `${GOOGLE_PLACES_BASE_URL}/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}&maxresults=20`;
-                    const response = await fetch(url);
-                    const data = await response.json();
+                    const results = await placesTextSearch({ query });
                     
-                    console.log(`Attraction search for "${query}":`, data);
+                    console.log(`Attraction search for "${query}":`, results.length, 'results');
                     
-                    if (data.status === 'OK' && data.results.length > 0) {
-                        return data.results
+                    if (results.length > 0) {
+                        return results
                             .filter(place => place.rating >= 3.5) // Lowered rating threshold
                             .slice(0, 6)
                             .map(place => ({

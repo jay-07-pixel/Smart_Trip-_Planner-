@@ -1,0 +1,7 @@
+{
+  "name": "smart-trip-planner-india",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/generate-config.js"
+  }
+}
