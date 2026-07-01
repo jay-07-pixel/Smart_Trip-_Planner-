@@ -12,6 +12,7 @@
             const config = window.API_CONFIG;
             if (!config || !config.GOOGLE_API_KEY || config.GOOGLE_API_KEY === 'YOUR_GOOGLE_API_KEY_HERE') {
                 console.warn('Google Maps API key missing. Copy js/config.example.js to js/config.js and add your keys.');
+                window.mapsAuthFailed = true;
                 return;
             }
 
@@ -19,6 +20,10 @@
             script.src = `https://maps.googleapis.com/maps/api/js?key=${config.GOOGLE_API_KEY}&libraries=places,geometry&callback=initGoogleMaps`;
             script.async = true;
             script.defer = true;
+            script.onerror = function () {
+                console.error('Failed to load Google Maps JavaScript API');
+                window.mapsAuthFailed = true;
+            };
             document.head.appendChild(script);
         })();
     </script>
@@ -30,6 +35,13 @@
         let placesService = null;
         let geocoder = null;
         let distanceMatrixService = null;
+        window.mapsAuthFailed = false;
+
+        // Called by Google when the API key is invalid or blocked
+        function gm_authFailure() {
+            console.error('Google Maps API authentication failed (InvalidKeyMapError). Check your API key in Google Cloud Console.');
+            window.mapsAuthFailed = true;
+        }
 
         // Initialize Google Maps services (must be in global scope)
         function initGoogleMaps() {
@@ -754,8 +766,12 @@
         const WEATHER_API_KEY = window.API_CONFIG?.WEATHER_API_KEY || '';
         const WEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-        function waitForGoogleMaps(timeoutMs = 15000) {
+        function waitForGoogleMaps(timeoutMs = 8000) {
             return new Promise((resolve) => {
+                if (window.mapsAuthFailed) {
+                    resolve(false);
+                    return;
+                }
                 if (googleMapsLoaded && placesService && geocoder) {
                     resolve(true);
                     return;
@@ -763,7 +779,10 @@
 
                 const start = Date.now();
                 const interval = setInterval(() => {
-                    if (googleMapsLoaded && placesService && geocoder) {
+                    if (window.mapsAuthFailed) {
+                        clearInterval(interval);
+                        resolve(false);
+                    } else if (googleMapsLoaded && placesService && geocoder) {
                         clearInterval(interval);
                         resolve(true);
                     } else if (Date.now() - start >= timeoutMs) {
@@ -856,6 +875,8 @@
                 } else {
                     if (!GOOGLE_API_KEY) {
                         console.warn('⚠️ API config missing — add keys to js/config.js locally or Netlify env vars');
+                    } else if (window.mapsAuthFailed) {
+                        console.warn('⚠️ Google Maps API key rejected — using sample place data. Fix key in Google Cloud Console (KalpanikTRIPMAPS).');
                     } else {
                         console.warn('⚠️ Google Maps not loaded — using sample place data');
                     }
@@ -865,6 +886,13 @@
                     attractions = getSampleAttractions(destination, tripType);
                 }
 
+                const apiKeyWarning = window.mapsAuthFailed ? `
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-amber-900">
+                        <p class="font-semibold"><i class="fas fa-exclamation-triangle mr-2"></i>Google Maps API key issue</p>
+                        <p class="text-sm mt-1">Live hotel and place data could not load. Showing sample itinerary instead. In Google Cloud project <strong>KalpanikTRIPMAPS</strong>, enable <strong>Maps JavaScript API</strong>, link billing, and verify your API key.</p>
+                    </div>
+                ` : '';
+
                 console.log('API Results:', { hotels, restaurants, attractions, weatherData, trafficData });
 
                 // Calculate trip duration
@@ -872,7 +900,7 @@
                 const end = new Date(endDate);
                 const tripDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-                const itineraryContent = await buildDetailedItinerary(
+                const itineraryContent = apiKeyWarning + await buildDetailedItinerary(
                     destination, tripType, travelStyle, startDate, endDate, tripDays,
                     hotels, restaurants, attractions, weatherData, trafficData,
                     travelBudget, stayBudget, foodBudget, activitiesBudget, shoppingBudget, miscBudget
@@ -1658,35 +1686,33 @@
         async function getWeatherForecast(destination, startDate, endDate) {
             try {
                 console.log('🔄 Fetching weather data for:', destination);
-                
-                // First get coordinates for the destination
+
+                const cityName = destination.split(',')[0].trim();
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+
+                // Try coordinates via Google Geocoding when Maps is available
                 const coordinates = await getDestinationCoordinates(destination);
-                if (!coordinates) {
-                    console.error('❌ Could not get coordinates for weather');
-                    return generateSampleWeatherData(startDate, endDate);
+                let weatherUrl;
+
+                if (coordinates) {
+                    weatherUrl = `${WEATHER_BASE_URL}/forecast?lat=${coordinates.lat}&lon=${coordinates.lng}&appid=${WEATHER_API_KEY}&units=metric`;
+                } else {
+                    // Fallback: city name (works when Google Maps key is invalid)
+                    weatherUrl = `${WEATHER_BASE_URL}/forecast?q=${encodeURIComponent(cityName)},IN&appid=${WEATHER_API_KEY}&units=metric`;
                 }
 
-                const { lat, lng } = coordinates;
-                console.log('✅ Got coordinates for weather:', lat, lng);
-                
-                // Use CORS proxy for weather API
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const weatherUrl = `${WEATHER_BASE_URL}/forecast?lat=${lat}&lon=${lng}&appid=${WEATHER_API_KEY}&units=metric`;
                 const url = proxyUrl + encodeURIComponent(weatherUrl);
-                
                 console.log('🔄 Making weather API call...');
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                console.log('Weather API response:', data);
 
                 if (data.cod === '200' || data.cod === 200) {
                     console.log('✅ Weather data received successfully');
                     return processWeatherData(data, startDate, endDate);
-                } else {
-                    console.error('❌ Weather API error:', data);
-                    return generateSampleWeatherData(startDate, endDate);
                 }
+
+                console.error('❌ Weather API error:', data);
+                return generateSampleWeatherData(startDate, endDate);
             } catch (error) {
                 console.error('❌ Error fetching weather:', error);
                 return generateSampleWeatherData(startDate, endDate);
