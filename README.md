@@ -30,7 +30,7 @@
 - **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner)** — Start planning a trip
 - **[GitHub Repository](https://github.com/jay-07-pixel/Smart_Trip-_Planner-)** — Source code
 
-> **Note:** After you click **Generate Smart Itinerary**, please wait **30–40 seconds** while the app fetches hotels, restaurants, attractions, and weather data from live APIs.
+> **Note:** After you click **Generate Smart Itinerary**, please wait **30–40 seconds** while the app fetches hotels, restaurants, attractions, weather, and optional traffic data from live APIs.
 
 ---
 
@@ -40,11 +40,13 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 
 ### Key Highlights
 
-- AI-powered itinerary generation
-- India-focused destinations and travel experiences
-- Budget planning and category-wise allocation
+- AI-powered day-by-day itinerary generation
+- Live hotel, restaurant, and attraction data via Google Places API
+- Real-time weather forecasts via OpenWeatherMap
+- **Historical traffic analysis** with best departure times and 8-day route patterns
+- Smart budget planning with category-wise allocation
 - Hotel and transport price comparison links
-- Weather-aware trip suggestions
+- 7 trip types and 3 travel styles (Relaxed, Balanced, Intense)
 - Responsive design for desktop and mobile
 - Multiple pages: destinations, experiences, packages, reviews, and pricing
 
@@ -56,28 +58,52 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 
 - **7 trip types:** Heritage, Adventure, Spiritual, Beach, Wildlife, Food, Shopping
 - **3 travel styles:** Relaxed, Balanced, Intense
-- Dynamic day-by-day itineraries
-- Personalized activity recommendations
-- **Generation time:** Allow **30–40 seconds** for the full itinerary to load (live API calls for places and weather)
+- **Interests:** Temples, local cuisine, nature, adventure, markets, heritage, wellness, festivals
+- Destination, dates, travelers, and special requirements
+- Dynamic day-by-day itineraries with personalized activity recommendations
+- **Generation time:** Allow **30–40 seconds** for the full itinerary to load
+
+### Live Data Integration
+
+- **Hotels & lodging** — fetched from Google Places API, filtered by budget and rating
+- **Restaurants** — real dining options with cuisine type and price level
+- **Attractions** — tourist spots tailored to your selected trip type
+- **Weather forecast** — trip-date weather with temperature, rain chance, and activity tips
+- **Sample data fallback** — if an API is unavailable, the app still generates a usable itinerary
+
+### Historical Traffic Analysis (Optional)
+
+Enable **Traffic Analysis** on the trip planner form to unlock route insights powered by **Google Maps Distance Matrix API**:
+
+- **Route overview** — starting point → destination with baseline travel time
+- **Best times to travel** — recommended departure slots with time saved vs. peak traffic
+- **Times to avoid** — peak-hour delays highlighted with extra travel time
+- **8-day traffic pattern** — color-coded heatmap (green = faster, red = slower) across the last 8 days
+- **Real vs. estimated data** — live Google Maps data when available; estimated patterns as fallback
+- **Departure time picker** — choose preferred leave time for personalized recommendations
 
 ### Budget Management
 
-- Total budget control
+- Total trip budget with slider control
 - Category breakdown: Travel, Stay, Food, Activities, Shopping, Misc
-- Budget-aware hotel and activity suggestions
+- Real-time allocated vs. remaining budget display
+- Budget-aware hotel and restaurant suggestions
 
 ### Price Comparison
 
-- Hotel comparison links for Booking.com, Agoda, and OYO
-- Transport comparison links for flights, trains, and buses
-- Estimated price ranges and booking tips
+- **Hotels** — compare across Booking.com, Agoda, and OYO
+- **Flights** — MakeMyTrip, Cleartrip, Goibibo, IndiGo
+- **Trains** — IRCTC, ConfirmTkt, Trainman, RailYatri
+- **Buses** — RedBus, AbhiBus, Paytm, TicketGoose
+- One-click open multiple booking sites for side-by-side comparison
 
 ### Interactive Experience
 
-- Place details and restaurant information
-- Directions with map integration
+- View place details, restaurant menus, and popular dishes
+- Get directions via Google Maps integration
 - Export and share itineraries
-- Responsive modals and smooth UI interactions
+- Location access for real-time travel time estimates
+- Responsive modals, loading screen, and smooth UI
 
 ---
 
@@ -92,9 +118,11 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 
 ### Integrations
 
-- Google Maps / Places services
-- OpenWeatherMap
-- Browser Geolocation API
+- **Google Maps JavaScript API** — maps, geocoding, directions
+- **Google Places API** — hotels, restaurants, attractions
+- **Google Distance Matrix API** — travel times and historical traffic analysis
+- **OpenWeatherMap** — weather forecasts for trip dates
+- **Browser Geolocation API** — user location for route planning
 
 ---
 
@@ -103,7 +131,7 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 | Page | File | Description |
 |------|------|-------------|
 | Landing | `index.html` | Hero section, features, destinations, and how it works |
-| Trip Planner | `trip-planner.html` | Main planning form, itinerary generation, budget tools |
+| Trip Planner | `trip-planner.html` | Main form, live API itinerary, budget tools, weather, traffic analysis |
 | Destinations | `destinations.html` | Popular Indian destinations with filters |
 | Experiences | `experiences.html` | Adventure, cultural, wellness, and culinary experiences |
 | Packages | `packages.html` | Curated travel packages and offers |
@@ -122,9 +150,10 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 ### Quick Start
 
 1. Open the **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner)**
-2. Fill in destination, dates, budget, and travel preferences
-3. Click **Generate Smart Itinerary**
-4. Wait **30–40 seconds** for results — a loading screen appears while data is fetched
+2. Fill in destination, dates, budget, trip type, and travel style
+3. *(Optional)* Enable **Traffic Analysis** and enter your starting point + departure time
+4. Click **Generate Smart Itinerary**
+5. Wait **30–40 seconds** for results — a loading screen appears while live data is fetched
 
 Or visit the **[Live Website](https://smart-tripplanner.netlify.app)** and navigate from the home page.
 
@@ -195,16 +224,29 @@ After saving the variables, trigger a **new deploy** so the build can generate `
 - Shopping
 - Misc
 
+### Traffic Analysis Output
+
+When traffic analysis is enabled, the itinerary includes:
+
+| Section | Description |
+|---------|-------------|
+| Route summary | Starting point → destination with baseline travel time |
+| Best times to travel | Top departure slots with time saved (e.g. 06:00 — Save 1h 26m) |
+| Times to avoid | Peak-hour slots with extra delay (e.g. 18:00 — +1h 32m) |
+| 8-day traffic pattern | Heatmap grid by time slot and day (06:00, 08:00, 12:00, 17:00, 19:00) |
+| Data indicators | ✅ Real Google Maps data · ⚠️ Estimated when API unavailable |
+
 ---
 
 ## Future Roadmap
 
 ### Phase 1 (Current)
 
-- AI itinerary generation
-- Real-time data integration
-- Budget management
-- Responsive UI
+- AI itinerary generation with live Google Places data
+- Real-time weather integration (OpenWeatherMap)
+- Historical traffic analysis with 8-day route patterns
+- Budget management and price comparison links
+- Responsive UI across all pages
 
 ### Phase 2 (Planned)
 
