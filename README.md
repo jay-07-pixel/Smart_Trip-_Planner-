@@ -2,7 +2,7 @@
 
 **Your intelligent travel companion for exploring Incredible India with AI-powered planning, real-time data, and personalized itineraries.**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://smart-tripplanner.netlify.app)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://smart-tripplanner.netlify.app/trip-planner)
 [![Tech Stack](https://img.shields.io/badge/Tech-HTML%20%7C%20Tailwind%20%7C%20JavaScript-38BDF8?style=for-the-badge&logo=javascript&logoColor=white)](https://github.com/topics/javascript)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active-22C55E?style=for-the-badge)](https://github.com/jay-07-pixel/Smart_Trip-_Planner-)
@@ -26,9 +26,11 @@
 
 ## Live Demo
 
-- **[Live Website](https://smart-tripplanner.netlify.app)** — Try the app online
-- **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner.html)** — Start planning a trip
+- **[Live Website](https://smart-tripplanner.netlify.app)** — Home page
+- **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner)** — Start planning a trip
 - **[GitHub Repository](https://github.com/jay-07-pixel/Smart_Trip-_Planner-)** — Source code
+
+> **Note:** After you click **Generate Smart Itinerary**, please wait **20–30 seconds** while the app fetches hotels, restaurants, attractions, and weather data from live APIs.
 
 ---
 
@@ -56,6 +58,7 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 - **3 travel styles:** Relaxed, Balanced, Intense
 - Dynamic day-by-day itineraries
 - Personalized activity recommendations
+- **Generation time:** Allow **20–30 seconds** for the full itinerary to load (live API calls for places and weather)
 
 ### Budget Management
 
@@ -118,7 +121,12 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 
 ### Quick Start
 
-Visit the **[Live Demo](https://smart-tripplanner.netlify.app)** to use the app immediately.
+1. Open the **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner)**
+2. Fill in destination, dates, budget, and travel preferences
+3. Click **Generate Smart Itinerary**
+4. Wait **20–30 seconds** for results — a loading screen appears while data is fetched
+
+Or visit the **[Live Website](https://smart-tripplanner.netlify.app)** and navigate from the home page.
 
 ### Local Setup
 
@@ -247,6 +255,7 @@ This project is licensed under the **MIT License**.
 ## Support
 
 - **Website:** [https://smart-tripplanner.netlify.app](https://smart-tripplanner.netlify.app)
+- **Trip Planner:** [https://smart-tripplanner.netlify.app/trip-planner](https://smart-tripplanner.netlify.app/trip-planner)
 - **GitHub Issues:** [Report bugs or request features](https://github.com/jay-07-pixel/Smart_Trip-_Planner-/issues)
 - **Discussions:** [Suggest new features](https://github.com/jay-07-pixel/Smart_Trip-_Planner-/discussions)
 
