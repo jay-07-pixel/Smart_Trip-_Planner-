@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trip Planner India - Your Smart Travel Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1E40AF',
+                        accent: '#F59E0B'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .float-animation { animation: float 6s ease-in-out infinite; }
+        .glow-animation { animation: glow 3s ease-in-out infinite; }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, #3B82F6, #8B5CF6, #F59E0B);
+            background-size: 200% 200%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card-3d:hover {
+            transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+        }
+        
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="glassmorphism shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-route text-xl text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Smart Trip Planner India</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-700 hover:text-primary transition-all duration-300 font-medium relative group">
+                        Features
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#how-it-works" class="text-gray-700 hover:text-primary transition-all duration-300 font-medium relative group">
+                        How It Works
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="pricing.html" class="text-gray-700 hover:text-primary transition-all duration-300 font-medium relative group">
+                        Pricing
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#contact" class="text-gray-700 hover:text-primary transition-all duration-300 font-medium relative group">
+                        Contact
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-700 hover:text-primary transition-all duration-300 font-medium">Sign In</button>
+                    <a href="trip-planner.html" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2.5 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 inline-block font-semibold">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden min-h-screen flex items-center">
+        <canvas id="particles-canvas"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-pink-600/10"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <h1 class="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
+                        Plan Your Perfect Indian Journey with 
+                        <span class="gradient-text typing-cursor" id="typing-text">Smart Travel Magic</span>
+                    </h1>
+                    <p class="text-xl lg:text-2xl text-gray-700 leading-relaxed font-medium" id="hero-subtitle" style="opacity: 0; transform: translateY(20px); transition: all 0.8s ease;">
+                        From the snow-capped Himalayas to the pristine beaches of Goa, our AI-powered planner crafts personalized travel itineraries across Incredible India.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4" id="hero-buttons" style="opacity: 0; transform: translateY(20px); transition: all 0.8s ease;">
+                        <a href="trip-planner.html" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all transform hover:scale-105 glow-animation inline-flex items-center">
+                            <i class="fas fa-magic mr-2"></i>
+                            Start Planning Now
+                        </a>
+                        <button class="glassmorphism text-gray-800 px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105 inline-flex items-center">
+                            <i class="fas fa-play mr-2"></i>
+                            Watch Demo
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-6 text-sm text-gray-600" id="hero-features" style="opacity: 0; transform: translateY(20px); transition: all 0.8s ease;">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            <span>Free to start</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            <span>No credit card required</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            <span>Instant AI results</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative float-animation">
+                    <div class="glassmorphism rounded-3xl shadow-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500 card-3d">
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                                <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                                <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                                <span class="text-sm text-gray-500 ml-4">AI Trip Planner</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="h-4 bg-gradient-to-r from-blue-200 to-blue-300 rounded-full w-4/5 shimmer"></div>
+                                <div class="h-4 bg-gradient-to-r from-purple-200 to-purple-300 rounded-full w-3/5 shimmer"></div>
+                                <div class="h-4 bg-gradient-to-r from-green-200 to-green-300 rounded-full w-5/6 shimmer"></div>
+                            </div>
+                            <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-6 border border-orange-100">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                                        <i class="fas fa-robot text-white text-lg"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="h-3 bg-orange-200 rounded-full w-3/4 mb-2"></div>
+                                        <div class="h-3 bg-orange-200 rounded-full w-1/2"></div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-sm text-gray-600">
+                                    "Perfect 7-day Rajasthan itinerary created! ✨"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-6 -right-6 bg-gradient-to-r from-accent to-orange-500 text-white p-4 rounded-full shadow-lg glow-animation">
+                        <i class="fas fa-star text-xl"></i>
+                    </div>
+                    <div class="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-400 to-blue-500 text-white p-3 rounded-full shadow-lg">
+                        <i class="fas fa-heart text-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Floating Elements -->
+        <div class="absolute top-20 right-20 w-24 h-24 bg-primary/10 rounded-full float-animation"></div>
+        <div class="absolute bottom-20 left-20 w-20 h-20 bg-accent/10 rounded-full float-animation" style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/3 left-10 w-16 h-16 bg-purple-500/10 rounded-full float-animation" style="animation-delay: -4s;"></div>
+        <div class="absolute bottom-1/3 right-10 w-18 h-18 bg-green-500/10 rounded-full float-animation" style="animation-delay: -1s;"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Why Choose Smart Trip Planner India?</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Experience the magic of Incredible India with a smart planner that understands culture, traditions, and creates unforgettable journeys.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 p-8 rounded-2xl hover:shadow-xl transition-all card-3d group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Smart AI Recommendations</h3>
+                    <p class="text-gray-600">
+                        Our advanced AI understands your travel style and recommends personalized Indian destinations, activities, and cultural experiences tailored just for you.
+                    </p>
+                    <div class="mt-4 text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Learn More →
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-2xl hover:shadow-xl transition-all card-3d group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-clock text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Lightning Fast Planning</h3>
+                    <p class="text-gray-600">
+                        Get complete, detailed itineraries in seconds, not hours. Our AI processes thousands of options instantly to create your perfect trip.
+                    </p>
+                    <div class="mt-4 text-green-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Try Now →
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl hover:shadow-xl transition-all card-3d group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-map-marked-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Hidden Gems Discovery</h3>
+                    <p class="text-gray-600">
+                        Uncover local secrets and off-the-beaten-path destinations across India that most tourists never find. Experience authentic India.
+                    </p>
+                    <div class="mt-4 text-purple-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Explore →
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-yellow-50 to-amber-50 p-8 rounded-2xl hover:shadow-xl transition-all card-3d group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-dollar-sign text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Smart Budget Optimization</h3>
+                    <p class="text-gray-600">
+                        Advanced cost analysis helps you get maximum value for your money across Indian destinations with real-time price comparisons.
+                    </p>
+                    <div class="mt-4 text-yellow-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Save More →
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-teal-50 to-cyan-50 p-8 rounded-2xl hover:shadow-xl transition-all card-3d group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Group Travel Made Easy</h3>
+                    <p class="text-gray-600">
+                        Seamlessly coordinate group preferences and create collaborative itineraries that satisfy everyone's interests across incredible India.
+                    </p>
+                    <div class="mt-4 text-teal-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Plan Together →
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl hover:shadow-xl transition-all card-3d group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Local Expert Insights</h3>
+                    <p class="text-gray-600">
+                        Get authentic local recommendations, cultural etiquette tips, safety information, and insider knowledge for Indian destinations.
+                    </p>
+                    <div class="mt-4 text-blue-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                        Get Insights →
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Indian Destinations -->
+    <section class="py-20 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Popular Indian Destinations</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    From the majestic Himalayas to the serene backwaters, discover the diverse beauty of India
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all card-3d group cursor-pointer overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-r from-primary to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-mountain text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2 group-hover:text-primary transition-colors">Himalayas</h3>
+                        <p class="text-sm text-gray-600 text-center group-hover:text-gray-700 transition-colors">Adventure, spirituality & breathtaking views</p>
+                        <div class="mt-4 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-xs text-primary font-semibold">Explore →</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all card-3d group cursor-pointer overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-600/5 to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-water text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2 group-hover:text-green-600 transition-colors">Kerala Backwaters</h3>
+                        <p class="text-sm text-gray-600 text-center group-hover:text-gray-700 transition-colors">Serene houseboat experiences & Ayurveda</p>
+                        <div class="mt-4 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-xs text-green-600 font-semibold">Explore →</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all card-3d group cursor-pointer overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-umbrella-beach text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2 group-hover:text-purple-600 transition-colors">Goa Beaches</h3>
+                        <p class="text-sm text-gray-600 text-center group-hover:text-gray-700 transition-colors">Sun, sand, culture & nightlife</p>
+                        <div class="mt-4 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-xs text-purple-600 font-semibold">Explore →</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all card-3d group cursor-pointer overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-600/5 to-amber-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-church text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 text-center mb-2 group-hover:text-yellow-600 transition-colors">Golden Triangle</h3>
+                        <p class="text-sm text-gray-600 text-center group-hover:text-gray-700 transition-colors">Delhi, Agra & Jaipur heritage</p>
+                        <div class="mt-4 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-xs text-yellow-600 font-semibold">Explore →</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Get your personalized Indian travel plan in just three simple steps
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-white text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Tell Us About Your Trip</h3>
+                    <p class="text-gray-600">
+                        Share your preferred Indian destinations, dates, budget, interests, and travel style preferences.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-white text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">AI Creates Your Plan</h3>
+                    <p class="text-gray-600">
+                        Our AI analyzes thousands of Indian travel options and creates a personalized itinerary just for you.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-accent rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-white text-2xl font-bold">3</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Book & Enjoy</h3>
+                    <p class="text-gray-600">
+                        Book your accommodations, activities, and transportation across India with our integrated booking system.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-primary to-secondary">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-white mb-6">Ready to Explore Incredible India?</h2>
+            <p class="text-xl text-blue-100 mb-8">
+                Join thousands of travelers who have already discovered the magic of AI-powered Indian trip planning.
+            </p>
+            <a href="trip-planner.html" class="bg-white text-primary px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg inline-block">
+                <i class="fas fa-rocket mr-2"></i>
+                Start Your Indian Journey Today
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-route text-2xl text-primary"></i>
+                        <span class="text-xl font-bold">AI Trip Planner India</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Your intelligent travel companion that makes planning the perfect Indian trip effortless and enjoyable.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Product</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Integrations</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Community</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Status</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AI Trip Planner India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced Page Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticleSystem();
+            initTypingEffect();
+            initScrollAnimations();
+            initNavigation();
+            initHeroAnimations();
+        });
+
+        // Particle System
+        function initParticleSystem() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = Math.random() * 2 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                    this.color = `hsl(${210 + Math.random() * 60}, 70%, 60%)`;
+                }
+                
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+                
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = this.opacity;
+                    ctx.fill();
+                }
+            }
+            
+            // Create particles
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle());
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                // Draw connections
+                ctx.globalAlpha = 0.1;
+                particles.forEach((a, i) => {
+                    particles.slice(i + 1).forEach(b => {
+                        const distance = Math.hypot(a.x - b.x, a.y - b.y);
+                        if (distance < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y);
+                            ctx.lineTo(b.x, b.y);
+                            ctx.strokeStyle = '#3B82F6';
+                            ctx.stroke();
+                        }
+                    });
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        // Typing Effect
+        function initTypingEffect() {
+            const texts = ['Smart Travel Magic', 'AI-Powered Adventures', 'Incredible Journeys', 'Dream Destinations'];
+            let textIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            const typingElement = document.getElementById('typing-text');
+            
+            if (!typingElement) return;
+            
+            function typeWriter() {
+                const currentText = texts[textIndex];
+                
+                if (isDeleting) {
+                    typingElement.textContent = currentText.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    typingElement.textContent = currentText.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+                
+                let speed = isDeleting ? 50 : 100;
+                
+                if (!isDeleting && charIndex === currentText.length) {
+                    speed = 2000;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % texts.length;
+                    speed = 500;
+                }
+                
+                setTimeout(typeWriter, speed);
+            }
+            
+            typeWriter();
+        }
+
+        // Hero Animations
+        function initHeroAnimations() {
+            // Simple fallback animations that don't depend on GSAP
+            setTimeout(() => {
+                const subtitle = document.getElementById('hero-subtitle');
+                const buttons = document.getElementById('hero-buttons');
+                const features = document.getElementById('hero-features');
+                
+                if (subtitle) {
+                    subtitle.style.opacity = '1';
+                    subtitle.style.transform = 'translateY(0)';
+                }
+                if (buttons) {
+                    buttons.style.opacity = '1';
+                    buttons.style.transform = 'translateY(0)';
+                }
+                if (features) {
+                    features.style.opacity = '1';
+                    features.style.transform = 'translateY(0)';
+                }
+            }, 500);
+        }
+
+        // Scroll Animations
+        function initScrollAnimations() {
+            // Intersection Observer for scroll animations (better browser support)
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0) scale(1)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe elements for animation
+            document.querySelectorAll('.card-3d, .bg-white, #how-it-works .text-center > div').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(50px) scale(0.9)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+            
+            // Simple floating animation
+            const floatingElements = document.querySelectorAll('.float-animation');
+            floatingElements.forEach((el, index) => {
+                el.style.animation = `float 6s ease-in-out infinite`;
+                el.style.animationDelay = `${index * 0.5}s`;
+            });
+        }
+
+            // Enhanced Navigation
+        function initNavigation() {
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Enhanced scroll effect for navigation
+            let lastScrollY = 0;
+            const nav = document.querySelector('nav');
+            
+            window.addEventListener('scroll', function() {
+                const currentScrollY = window.scrollY;
+                
+                if (currentScrollY > 100) {
+                    nav.classList.add('bg-white/95', 'shadow-xl');
+                    nav.classList.remove('bg-white/80');
+                } else {
+                    nav.classList.remove('bg-white/95', 'shadow-xl');
+                    nav.classList.add('bg-white/80');
+                }
+                
+                // Hide/show nav on scroll
+                if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                    gsap.to(nav, { y: -100, duration: 0.3 });
+                } else {
+                    gsap.to(nav, { y: 0, duration: 0.3 });
+                }
+                
+                lastScrollY = currentScrollY;
+            });
+        }
+
+        // Interactive hover effects for cards
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.closest('.card-3d')) {
+                gsap.to(e.target.closest('.card-3d'), {
+                    scale: 1.05,
+                    rotationY: 10,
+                    rotationX: 5,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            }
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.closest('.card-3d')) {
+                gsap.to(e.target.closest('.card-3d'), {
+                    scale: 1,
+                    rotationY: 0,
+                    rotationX: 0,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            }
+        });
+
+        // Mouse movement parallax
+        document.addEventListener('mousemove', function(e) {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            
+            const xPos = (clientX / innerWidth - 0.5) * 20;
+            const yPos = (clientY / innerHeight - 0.5) * 20;
+            
+            gsap.to('.float-animation', {
+                x: xPos,
+                y: yPos,
+                duration: 1,
+                ease: 'power2.out',
+                stagger: 0.1
+            });
+        });
+    </script>
+</body>
+</html>
+

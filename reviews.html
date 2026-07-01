@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - AI Trip Planner India</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1E40AF',
+                        accent: '#F59E0B'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .review-card {
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .review-card:hover {
+            transform: rotateY(5deg) rotateX(5deg) scale(1.05);
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .star {
+            color: #fbbf24;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .star.filled {
+            animation: starPulse 0.6s ease;
+        }
+        
+        @keyframes starPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .testimonial-carousel {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .testimonial-slide {
+            min-width: 100%;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s ease;
+        }
+        
+        .testimonial-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(1deg); }
+            50% { transform: translateY(-20px) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(-1deg); }
+        }
+        
+        .morphing-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 251.2;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        
+        .quote-icon {
+            font-size: 4rem;
+            opacity: 0.1;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            color: #3B82F6;
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow-effect:hover {
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+        }
+    </style>
+</head>
+<body class="morphing-bg min-h-screen text-white overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="glassmorphism shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-route text-xl text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white">Smart Trip Planner India</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Home</a>
+                    <a href="destinations.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Destinations</a>
+                    <a href="experiences.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Experiences</a>
+                    <a href="packages.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Packages</a>
+                    <a href="reviews.html" class="text-white font-semibold">Reviews</a>
+                    <a href="gallery.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Gallery</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Contact</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Sign In</button>
+                    <a href="trip-planner.html" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2.5 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 inline-block font-semibold">
+                        Plan Trip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative py-20 overflow-hidden">
+        <div class="floating-element absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full"></div>
+        <div class="floating-element absolute bottom-10 left-10 w-16 h-16 bg-white/10 rounded-full" style="animation-delay: -2s;"></div>
+        <div class="floating-element absolute top-1/3 left-1/4 w-12 h-12 bg-white/10 rounded-full" style="animation-delay: -4s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <h1 class="text-6xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent" style="opacity: 0; transform: translateY(50px); transition: all 1s ease;">
+                    Traveler Reviews
+                </h1>
+                <p class="text-xl lg:text-2xl text-gray-200 max-w-3xl mx-auto mb-8" style="opacity: 0; transform: translateY(30px); transition: all 1s ease 0.3s;">
+                    Real stories from real travelers who discovered incredible India with our AI-powered planning
+                </p>
+                
+                <!-- Overall Rating Display -->
+                <div class="flex justify-center items-center space-x-8 mb-8" style="opacity: 0; transform: translateY(20px); transition: all 1s ease 0.6s;">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-white mb-2">4.9</div>
+                        <div class="star-rating justify-center mb-2">
+                            <i class="fas fa-star star filled"></i>
+                            <i class="fas fa-star star filled"></i>
+                            <i class="fas fa-star star filled"></i>
+                            <i class="fas fa-star star filled"></i>
+                            <i class="fas fa-star star filled"></i>
+                        </div>
+                        <div class="text-sm text-gray-300">Based on 12,485 reviews</div>
+                    </div>
+                    <div class="h-16 w-px bg-white/30"></div>
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-accent mb-2">98%</div>
+                        <div class="text-sm text-gray-300">Satisfaction Rate</div>
+                    </div>
+                    <div class="h-16 w-px bg-white/30"></div>
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-emerald-400 mb-2">15k+</div>
+                        <div class="text-sm text-gray-300">Happy Travelers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rating Breakdown -->
+    <section class="py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-white">Rating Breakdown</h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4 rating-bar" data-rating="5" data-percentage="78">
+                    <span class="text-sm font-medium text-gray-300 w-8">5★</span>
+                    <div class="flex-1 bg-gray-700 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full transition-all duration-1s ease-out" style="width: 0%"></div>
+                    </div>
+                    <span class="text-sm text-gray-300 w-12">78%</span>
+                </div>
+                
+                <div class="flex items-center space-x-4 rating-bar" data-rating="4" data-percentage="15">
+                    <span class="text-sm font-medium text-gray-300 w-8">4★</span>
+                    <div class="flex-1 bg-gray-700 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-blue-400 to-blue-500 h-3 rounded-full transition-all duration-1s ease-out" style="width: 0%"></div>
+                    </div>
+                    <span class="text-sm text-gray-300 w-12">15%</span>
+                </div>
+                
+                <div class="flex items-center space-x-4 rating-bar" data-rating="3" data-percentage="5">
+                    <span class="text-sm font-medium text-gray-300 w-8">3★</span>
+                    <div class="flex-1 bg-gray-700 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-3 rounded-full transition-all duration-1s ease-out" style="width: 0%"></div>
+                    </div>
+                    <span class="text-sm text-gray-300 w-12">5%</span>
+                </div>
+                
+                <div class="flex items-center space-x-4 rating-bar" data-rating="2" data-percentage="1">
+                    <span class="text-sm font-medium text-gray-300 w-8">2★</span>
+                    <div class="flex-1 bg-gray-700 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-orange-400 to-orange-500 h-3 rounded-full transition-all duration-1s ease-out" style="width: 0%"></div>
+                    </div>
+                    <span class="text-sm text-gray-300 w-12">1%</span>
+                </div>
+                
+                <div class="flex items-center space-x-4 rating-bar" data-rating="1" data-percentage="1">
+                    <span class="text-sm font-medium text-gray-300 w-8">1★</span>
+                    <div class="flex-1 bg-gray-700 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-red-400 to-red-500 h-3 rounded-full transition-all duration-1s ease-out" style="width: 0%"></div>
+                    </div>
+                    <span class="text-sm text-gray-300 w-12">1%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Reviews Carousel -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">Featured Reviews</h2>
+            
+            <div class="relative">
+                <div class="testimonial-carousel" id="testimonial-carousel">
+                    <!-- Review 1 -->
+                    <div class="testimonial-slide active">
+                        <div class="glassmorphism rounded-3xl p-8 mx-4 relative max-w-4xl mx-auto">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-left"></i>
+                            </div>
+                            <div class="flex items-center mb-6">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="John Smith" class="w-16 h-16 rounded-full object-cover mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">John Smith</h3>
+                                    <p class="text-gray-300">Travel Blogger from USA</p>
+                                    <div class="star-rating mt-1">
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <blockquote class="text-lg text-gray-200 leading-relaxed mb-6">
+                                "The AI trip planner created the most incredible 15-day journey through India. From the palaces of Rajasthan to the backwaters of Kerala, every detail was perfectly planned. The local insights and hidden gems they recommended made this trip truly unforgettable!"
+                            </blockquote>
+                            <div class="flex items-center justify-between text-sm text-gray-400">
+                                <span>Golden Triangle + Kerala Package</span>
+                                <span>March 2024</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="testimonial-slide">
+                        <div class="glassmorphism rounded-3xl p-8 mx-4 relative max-w-4xl mx-auto">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-left"></i>
+                            </div>
+                            <div class="flex items-center mb-6">
+                                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b587?w=100&h=100&fit=crop&crop=face" alt="Sarah Johnson" class="w-16 h-16 rounded-full object-cover mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Sarah Johnson</h3>
+                                    <p class="text-gray-300">Adventure Enthusiast from Canada</p>
+                                    <div class="star-rating mt-1">
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <blockquote class="text-lg text-gray-200 leading-relaxed mb-6">
+                                "As a solo female traveler, I was initially nervous about visiting India. The AI planner not only created a safe and exciting itinerary but also connected me with amazing local guides. The Himalayan trek was absolutely breathtaking!"
+                            </blockquote>
+                            <div class="flex items-center justify-between text-sm text-gray-400">
+                                <span>Himalayan Adventure Package</span>
+                                <span>January 2024</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="testimonial-slide">
+                        <div class="glassmorphism rounded-3xl p-8 mx-4 relative max-w-4xl mx-auto">
+                            <div class="quote-icon">
+                                <i class="fas fa-quote-left"></i>
+                            </div>
+                            <div class="flex items-center mb-6">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="Michael Chen" class="w-16 h-16 rounded-full object-cover mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Michael Chen</h3>
+                                    <p class="text-gray-300">Food & Culture Lover from UK</p>
+                                    <div class="star-rating mt-1">
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                        <i class="fas fa-star star filled"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <blockquote class="text-lg text-gray-200 leading-relaxed mb-6">
+                                "The culinary experiences were beyond amazing! The AI understood my food preferences perfectly and arranged cooking classes, street food tours, and visits to local spice markets. I learned so much about Indian culture through its incredible cuisine."
+                            </blockquote>
+                            <div class="flex items-center justify-between text-sm text-gray-400">
+                                <span>Cultural & Culinary Journey</span>
+                                <span>February 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carousel Controls -->
+                <button class="absolute left-4 top-1/2 transform -translate-y-1/2 glassmorphism p-4 rounded-full hover:bg-white/20 transition-all glow-effect" onclick="previousTestimonial()">
+                    <i class="fas fa-chevron-left text-white text-xl"></i>
+                </button>
+                <button class="absolute right-4 top-1/2 transform -translate-y-1/2 glassmorphism p-4 rounded-full hover:bg-white/20 transition-all glow-effect" onclick="nextTestimonial()">
+                    <i class="fas fa-chevron-right text-white text-xl"></i>
+                </button>
+
+                <!-- Carousel Indicators -->
+                <div class="flex justify-center mt-8 space-x-3">
+                    <button class="w-3 h-3 bg-white rounded-full opacity-100 transition-opacity" onclick="goToTestimonial(0)"></button>
+                    <button class="w-3 h-3 bg-white rounded-full opacity-50 transition-opacity" onclick="goToTestimonial(1)"></button>
+                    <button class="w-3 h-3 bg-white rounded-full opacity-50 transition-opacity" onclick="goToTestimonial(2)"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Review Grid -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">Recent Reviews</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Review Card 1 -->
+                <div class="review-card glassmorphism rounded-2xl p-6 relative">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="Emma Wilson" class="w-12 h-12 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">Emma Wilson</h4>
+                            <div class="star-rating">
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        "Perfect balance of adventure and relaxation. The houseboat experience in Kerala was magical!"
+                    </p>
+                    <div class="text-xs text-gray-400">Kerala Backwaters • 2 weeks ago</div>
+                </div>
+
+                <!-- Review Card 2 -->
+                <div class="review-card glassmorphism rounded-2xl p-6 relative">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" alt="David Brown" class="w-12 h-12 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">David Brown</h4>
+                            <div class="star-rating">
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        "The AI recommendations were spot-on! Discovered hidden gems I would never have found on my own."
+                    </p>
+                    <div class="text-xs text-gray-400">Rajasthan Royal • 1 month ago</div>
+                </div>
+
+                <!-- Review Card 3 -->
+                <div class="review-card glassmorphism rounded-2xl p-6 relative">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" alt="Lisa Garcia" class="w-12 h-12 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">Lisa Garcia</h4>
+                            <div class="star-rating">
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        "Exceptional service! The 24/7 support made me feel safe and confident throughout my journey."
+                    </p>
+                    <div class="text-xs text-gray-400">Golden Triangle • 3 weeks ago</div>
+                </div>
+
+                <!-- Review Card 4 -->
+                <div class="review-card glassmorphism rounded-2xl p-6 relative">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=60&h=60&fit=crop&crop=face" alt="James Taylor" class="w-12 h-12 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">James Taylor</h4>
+                            <div class="star-rating">
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        "The spiritual journey through Rishikesh changed my life. Perfectly planned meditation and yoga sessions."
+                    </p>
+                    <div class="text-xs text-gray-400">Spiritual Journey • 5 days ago</div>
+                </div>
+
+                <!-- Review Card 5 -->
+                <div class="review-card glassmorphism rounded-2xl p-6 relative">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face" alt="Maria Lopez" class="w-12 h-12 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">Maria Lopez</h4>
+                            <div class="star-rating">
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        "Great value for money! The package included everything and the quality exceeded expectations."
+                    </p>
+                    <div class="text-xs text-gray-400">Goa Beach Escape • 1 week ago</div>
+                </div>
+
+                <!-- Review Card 6 -->
+                <div class="review-card glassmorphism rounded-2xl p-6 relative">
+                    <div class="flex items-center mb-4">
+                        <img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=60&h=60&fit=crop&crop=face" alt="Alex Kim" class="w-12 h-12 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">Alex Kim</h4>
+                            <div class="star-rating">
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                                <i class="fas fa-star star filled text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        "The photography opportunities were endless! Every location was Instagram-worthy and breathtaking."
+                    </p>
+                    <div class="text-xs text-gray-400">Kashmir Paradise • 4 days ago</div>
+                </div>
+            </div>
+
+            <!-- Load More Reviews -->
+            <div class="text-center mt-12">
+                <button class="glassmorphism px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white/20 transition-all glow-effect">
+                    <i class="fas fa-plus mr-2"></i>
+                    Load More Reviews
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Write Review Section -->
+    <section class="py-20 bg-black/20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-white mb-4">Share Your Experience</h2>
+                <p class="text-xl text-gray-300">Help other travelers by sharing your incredible India journey</p>
+            </div>
+            
+            <div class="glassmorphism rounded-2xl p-8">
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Your Name</label>
+                            <input type="text" class="w-full bg-black/30 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-primary transition-colors" placeholder="Enter your name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Email</label>
+                            <input type="email" class="w-full bg-black/30 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-primary transition-colors" placeholder="your@email.com">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Package/Experience</label>
+                        <select class="w-full bg-black/30 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-primary transition-colors">
+                            <option>Select your package</option>
+                            <option>Golden Triangle Deluxe</option>
+                            <option>Kerala Backwaters</option>
+                            <option>Rajasthan Royal</option>
+                            <option>Himalayan Adventure</option>
+                            <option>Goa Beach Escape</option>
+                            <option>Kashmir Paradise</option>
+                            <option>Custom Package</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Rating</label>
+                        <div class="star-rating interactive-rating justify-start">
+                            <i class="fas fa-star star text-2xl cursor-pointer hover:text-yellow-400" data-rating="1"></i>
+                            <i class="fas fa-star star text-2xl cursor-pointer hover:text-yellow-400" data-rating="2"></i>
+                            <i class="fas fa-star star text-2xl cursor-pointer hover:text-yellow-400" data-rating="3"></i>
+                            <i class="fas fa-star star text-2xl cursor-pointer hover:text-yellow-400" data-rating="4"></i>
+                            <i class="fas fa-star star text-2xl cursor-pointer hover:text-yellow-400" data-rating="5"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Your Review</label>
+                        <textarea rows="6" class="w-full bg-black/30 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-primary transition-colors" placeholder="Share your experience..."></textarea>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transition-all transform hover:scale-105 glow-effect">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Submit Review
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/50 backdrop-blur-sm py-16 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-route text-xl text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">AI Trip Planner</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Discover incredible India with our AI-powered travel companion.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="destinations.html" class="hover:text-white transition-colors">Destinations</a></li>
+                        <li><a href="experiences.html" class="hover:text-white transition-colors">Experiences</a></li>
+                        <li><a href="packages.html" class="hover:text-white transition-colors">Packages</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Support</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-facebook text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-twitter text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-instagram text-white"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AI Trip Planner India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAnimations();
+            initializeCarousel();
+            initializeRatingBars();
+            initializeInteractiveRating();
+        });
+
+        // Page load animations
+        function initializeAnimations() {
+            setTimeout(() => {
+                const elements = document.querySelectorAll('[style*="opacity: 0"]');
+                elements.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, index * 200);
+                });
+            }, 300);
+        }
+
+        // Rating bars animation
+        function initializeRatingBars() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const bar = entry.target;
+                        const percentage = bar.dataset.percentage;
+                        const progressBar = bar.querySelector('.bg-gradient-to-r');
+                        
+                        setTimeout(() => {
+                            progressBar.style.width = percentage + '%';
+                        }, 500);
+                        
+                        observer.unobserve(bar);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.rating-bar').forEach(bar => {
+                observer.observe(bar);
+            });
+        }
+
+        // Testimonial carousel
+        let currentTestimonial = 0;
+        const totalTestimonials = 3;
+
+        function initializeCarousel() {
+            updateCarousel();
+            setInterval(nextTestimonial, 8000); // Auto-advance every 8 seconds
+        }
+
+        function updateCarousel() {
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const indicators = document.querySelectorAll('[onclick^="goToTestimonial"]');
+            
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentTestimonial);
+            });
+            
+            indicators.forEach((indicator, index) => {
+                indicator.style.opacity = index === currentTestimonial ? '1' : '0.5';
+            });
+        }
+
+        function nextTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % totalTestimonials;
+            updateCarousel();
+        }
+
+        function previousTestimonial() {
+            currentTestimonial = (currentTestimonial - 1 + totalTestimonials) % totalTestimonials;
+            updateCarousel();
+        }
+
+        function goToTestimonial(index) {
+            currentTestimonial = index;
+            updateCarousel();
+        }
+
+        // Interactive rating system
+        function initializeInteractiveRating() {
+            const stars = document.querySelectorAll('.interactive-rating .star');
+            let currentRating = 0;
+
+            stars.forEach((star, index) => {
+                star.addEventListener('mouseenter', () => {
+                    highlightStars(index + 1);
+                });
+
+                star.addEventListener('click', () => {
+                    currentRating = index + 1;
+                    setRating(currentRating);
+                });
+            });
+
+            document.querySelector('.interactive-rating').addEventListener('mouseleave', () => {
+                setRating(currentRating);
+            });
+        }
+
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('.interactive-rating .star');
+            stars.forEach((star, index) => {
+                star.style.color = index < rating ? '#fbbf24' : '#6b7280';
+            });
+        }
+
+        function setRating(rating) {
+            const stars = document.querySelectorAll('.interactive-rating .star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.style.color = '#fbbf24';
+                    star.classList.add('filled');
+                } else {
+                    star.style.color = '#6b7280';
+                    star.classList.remove('filled');
+                }
+            });
+        }
+
+        // Review cards animation on scroll
+        const reviewObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0) scale(1)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.review-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px) scale(0.95)';
+            card.style.transition = 'all 0.6s ease';
+            reviewObserver.observe(card);
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages - AI Trip Planner India</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1E40AF',
+                        accent: '#F59E0B'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .package-card {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+        
+        .package-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .filter-slide {
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .filter-slide.active {
+            transform: translateX(0);
+        }
+        
+        .price-range {
+            background: linear-gradient(to right, #3B82F6, #8B5CF6);
+            height: 4px;
+            border-radius: 2px;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow-effect:hover {
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+        }
+        
+        .package-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(45deg, #F59E0B, #EF4444);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .popular-badge {
+            background: linear-gradient(45deg, #10B981, #059669);
+        }
+        
+        .featured-badge {
+            background: linear-gradient(45deg, #8B5CF6, #7C3AED);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-900 via-teal-900 to-blue-900 min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="glassmorphism shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-route text-xl text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white">Smart Trip Planner India</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Home</a>
+                    <a href="destinations.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Destinations</a>
+                    <a href="experiences.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Experiences</a>
+                    <a href="packages.html" class="text-white font-semibold">Packages</a>
+                    <a href="reviews.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Reviews</a>
+                    <a href="gallery.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Gallery</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Contact</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-300 hover:text-white transition-all duration-300 font-medium">Sign In</button>
+                    <a href="trip-planner.html" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2.5 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 inline-block font-semibold">
+                        Plan Trip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative py-20 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-600/20 via-teal-600/20 to-blue-600/20"></div>
+        <div class="floating-element absolute top-10 right-10 w-20 h-20 bg-accent/20 rounded-full"></div>
+        <div class="floating-element absolute bottom-10 left-10 w-16 h-16 bg-primary/20 rounded-full" style="animation-delay: -2s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <h1 class="text-5xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-emerald-200 to-teal-200 bg-clip-text text-transparent">
+                    Travel Packages
+                </h1>
+                <p class="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+                    Carefully curated travel packages for every budget and preference. From luxury escapes to budget adventures.
+                </p>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-accent">150+</div>
+                        <div class="text-sm text-gray-400">Packages</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-emerald-400">50k+</div>
+                        <div class="text-sm text-gray-400">Happy Travelers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-400">4.9</div>
+                        <div class="text-sm text-gray-400">Rating</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-400">24/7</div>
+                        <div class="text-sm text-gray-400">Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glassmorphism rounded-2xl p-6 mb-8">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <h2 class="text-2xl font-bold text-white">Find Your Perfect Package</h2>
+                    <button id="filter-toggle" class="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 rounded-lg hover:shadow-xl transition-all glow-effect">
+                        <i class="fas fa-filter mr-2"></i>Filters
+                    </button>
+                </div>
+                
+                <!-- Filter Panel -->
+                <div id="filter-panel" class="filter-slide mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Duration Filter -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Duration</label>
+                        <select class="w-full bg-slate-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option>Any Duration</option>
+                            <option>1-3 Days</option>
+                            <option>4-7 Days</option>
+                            <option>8-15 Days</option>
+                            <option>15+ Days</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Budget Filter -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Budget</label>
+                        <select class="w-full bg-slate-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option>Any Budget</option>
+                            <option>Under ₹10,000</option>
+                            <option>₹10,000 - ₹25,000</option>
+                            <option>₹25,000 - ₹50,000</option>
+                            <option>₹50,000+</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Category Filter -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Category</label>
+                        <select class="w-full bg-slate-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option>All Categories</option>
+                            <option>Adventure</option>
+                            <option>Cultural</option>
+                            <option>Wellness</option>
+                            <option>Beach</option>
+                            <option>Heritage</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Region Filter -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Region</label>
+                        <select class="w-full bg-slate-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                            <option>All Regions</option>
+                            <option>North India</option>
+                            <option>South India</option>
+                            <option>East India</option>
+                            <option>West India</option>
+                            <option>Central India</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Grid -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="packages-grid">
+                <!-- Package 1 - Featured -->
+                <div class="package-card relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden shadow-2xl group">
+                    <div class="package-badge featured-badge">Featured</div>
+                    <div class="h-64 bg-gradient-to-br from-blue-500 to-purple-600 relative">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">15 Days</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold mb-2">Golden Triangle Deluxe</h3>
+                            <p class="text-sm opacity-90">Delhi • Agra • Jaipur • Udaipur</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="font-semibold">4.9</span>
+                                <span class="text-gray-400">(1.2k)</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-400 line-through">₹45,999</div>
+                                <div class="text-2xl font-bold text-accent">₹35,999</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm mb-6">
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>5-star hotels</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Private guide</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>All meals included</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Airport transfers</li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-blue-500 to-purple-500 py-3 rounded-lg font-semibold hover:shadow-xl transition-all glow-effect">
+                            Book Now - Save 22%
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Package 2 - Popular -->
+                <div class="package-card relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden shadow-2xl group">
+                    <div class="package-badge popular-badge">Popular</div>
+                    <div class="h-64 bg-gradient-to-br from-green-500 to-emerald-600 relative">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">10 Days</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold mb-2">Kerala Backwaters</h3>
+                            <p class="text-sm opacity-90">Kochi • Munnar • Alleppey</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="font-semibold">4.8</span>
+                                <span class="text-gray-400">(980)</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-accent">₹24,999</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm mb-6">
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Houseboat stay</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Tea plantation tour</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Ayurveda spa</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Local cuisine</li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-green-500 to-emerald-500 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Package 3 -->
+                <div class="package-card relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden shadow-2xl group">
+                    <div class="h-64 bg-gradient-to-br from-orange-500 to-red-600 relative">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">7 Days</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold mb-2">Rajasthan Royal</h3>
+                            <p class="text-sm opacity-90">Jaipur • Jodhpur • Jaisalmer</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="font-semibold">4.7</span>
+                                <span class="text-gray-400">(756)</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-accent">₹18,999</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm mb-6">
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Palace hotels</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Camel safari</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Folk performances</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Desert camping</li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-orange-500 to-red-500 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Package 4 -->
+                <div class="package-card relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden shadow-2xl group">
+                    <div class="h-64 bg-gradient-to-br from-purple-500 to-indigo-600 relative">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">12 Days</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold mb-2">Himalayan Adventure</h3>
+                            <p class="text-sm opacity-90">Rishikesh • Manali • Dharamshala</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="font-semibold">4.9</span>
+                                <span class="text-gray-400">(542)</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-accent">₹32,999</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm mb-6">
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Mountain trekking</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Yoga sessions</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>River rafting</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Spiritual tours</li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-purple-500 to-indigo-500 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Package 5 -->
+                <div class="package-card relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden shadow-2xl group">
+                    <div class="h-64 bg-gradient-to-br from-teal-500 to-blue-600 relative">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">6 Days</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold mb-2">Goa Beach Escape</h3>
+                            <p class="text-sm opacity-90">North Goa • South Goa</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="font-semibold">4.6</span>
+                                <span class="text-gray-400">(891)</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-accent">₹15,999</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm mb-6">
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Beach resort</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Water sports</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Sunset cruise</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Beach parties</li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-teal-500 to-blue-500 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Package 6 -->
+                <div class="package-card relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden shadow-2xl group">
+                    <div class="h-64 bg-gradient-to-br from-pink-500 to-rose-600 relative">
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">8 Days</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <h3 class="text-2xl font-bold mb-2">Kashmir Paradise</h3>
+                            <p class="text-sm opacity-90">Srinagar • Gulmarg • Pahalgam</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="font-semibold">4.8</span>
+                                <span class="text-gray-400">(623)</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-accent">₹28,999</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm mb-6">
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Houseboat stay</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Dal Lake shikara</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Gulmarg gondola</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-2"></i>Valley tours</li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-pink-500 to-rose-500 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-12">
+                <button id="load-more" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transition-all transform hover:scale-105 glow-effect">
+                    <i class="fas fa-plus mr-2"></i>
+                    Load More Packages
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offers -->
+    <section class="py-20 bg-gradient-to-r from-slate-900/80 to-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">Special Offers</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Early Bird Offer -->
+                <div class="glassmorphism rounded-2xl p-8 text-center">
+                    <div class="w-20 h-20 bg-gradient-to-r from-accent to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-early-bird text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Early Bird Special</h3>
+                    <p class="text-gray-300 mb-6">Book 60 days in advance and save up to 30% on all packages</p>
+                    <div class="text-3xl font-bold text-accent mb-4">30% OFF</div>
+                    <button class="bg-gradient-to-r from-accent to-orange-500 px-6 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                        Learn More
+                    </button>
+                </div>
+
+                <!-- Group Discount -->
+                <div class="glassmorphism rounded-2xl p-8 text-center">
+                    <div class="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-users text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Group Discount</h3>
+                    <p class="text-gray-300 mb-6">Travel with 6+ people and enjoy exclusive group rates</p>
+                    <div class="text-3xl font-bold text-emerald-400 mb-4">25% OFF</div>
+                    <button class="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 rounded-lg font-semibold hover:shadow-xl transition-all">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-white mb-6">Can't Find What You're Looking For?</h2>
+            <p class="text-xl text-gray-300 mb-8">
+                Let our AI create a personalized package just for you
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="trip-planner.html" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transition-all transform hover:scale-105 glow-effect">
+                    <i class="fas fa-magic mr-2"></i>
+                    Create Custom Package
+                </a>
+                <a href="contact.html" class="glassmorphism text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transition-all">
+                    <i class="fas fa-phone mr-2"></i>
+                    Call Travel Expert
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900/50 backdrop-blur-sm py-16 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-route text-xl text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">AI Trip Planner</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Discover incredible India with our AI-powered travel companion.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Popular Packages</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Golden Triangle</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Kerala Backwaters</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Rajasthan Royal</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Himalayan Adventure</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Support</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-facebook text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-twitter text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-instagram text-white"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AI Trip Planner India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Package cards animation
+        function animatePackages() {
+            gsap.from('.package-card', {
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                scrollTrigger: {
+                    trigger: '#packages-grid',
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
+
+        // Filter functionality
+        const filterToggle = document.getElementById('filter-toggle');
+        const filterPanel = document.getElementById('filter-panel');
+        let filtersVisible = false;
+
+        filterToggle.addEventListener('click', function() {
+            filtersVisible = !filtersVisible;
+            if (filtersVisible) {
+                filterPanel.classList.add('active');
+                filterToggle.innerHTML = '<i class="fas fa-times mr-2"></i>Close Filters';
+            } else {
+                filterPanel.classList.remove('active');
+                filterToggle.innerHTML = '<i class="fas fa-filter mr-2"></i>Filters';
+            }
+        });
+
+        // Load more functionality
+        const loadMoreBtn = document.getElementById('load-more');
+        let packagesLoaded = 6;
+
+        loadMoreBtn.addEventListener('click', function() {
+            // Simulate loading more packages
+            gsap.to(loadMoreBtn, {
+                scale: 0.95,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1
+            });
+            
+            // Add loading state
+            loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+            
+            setTimeout(() => {
+                packagesLoaded += 6;
+                loadMoreBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Load More Packages';
+                
+                if (packagesLoaded >= 18) {
+                    loadMoreBtn.innerHTML = '<i class="fas fa-check mr-2"></i>All Packages Loaded';
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.classList.add('opacity-50');
+                }
+            }, 1500);
+        });
+
+        // Package filtering
+        const filterSelects = document.querySelectorAll('select');
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                // Animate filter application
+                gsap.to('.package-card', {
+                    scale: 0.95,
+                    opacity: 0.7,
+                    duration: 0.3,
+                    stagger: 0.05,
+                    yoyo: true,
+                    repeat: 1
+                });
+            });
+        });
+
+        // Floating elements animation
+        gsap.to('.floating-element', {
+            y: -20,
+            duration: 3,
+            ease: 'power2.inOut',
+            repeat: -1,
+            yoyo: true,
+            stagger: 1
+        });
+
+        // Initialize package animations
+        animatePackages();
+
+        // Stats counter animation
+        gsap.to('.text-3xl', {
+            textContent: function(index, target) {
+                const finalValue = target.textContent;
+                return finalValue;
+            },
+            duration: 2,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: '.grid.grid-cols-2.md\\:grid-cols-4',
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1.5,
+                        scrollTo: target,
+                        ease: 'power2.inOut'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
