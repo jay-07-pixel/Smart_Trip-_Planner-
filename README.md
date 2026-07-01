@@ -30,7 +30,7 @@
 - **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner)** — Start planning a trip
 - **[GitHub Repository](https://github.com/jay-07-pixel/Smart_Trip-_Planner-)** — Source code
 
-> **Note:** After you click **Generate Smart Itinerary**, please wait **20–30 seconds** while the app fetches hotels, restaurants, attractions, and weather data from live APIs.
+> **Note:** After you click **Generate Smart Itinerary**, please wait **1–2 minutes** while the app fetches hotels, restaurants, attractions, and weather data from live APIs.
 
 ---
 
@@ -58,7 +58,7 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 - **3 travel styles:** Relaxed, Balanced, Intense
 - Dynamic day-by-day itineraries
 - Personalized activity recommendations
-- **Generation time:** Allow **20–30 seconds** for the full itinerary to load (live API calls for places and weather)
+- **Generation time:** Allow **1–2 minutes** for the full itinerary to load (live API calls for places and weather)
 
 ### Budget Management
 
@@ -124,7 +124,7 @@ AI Trip Planner India is a smart travel planning platform built for Indian desti
 1. Open the **[Trip Planner](https://smart-tripplanner.netlify.app/trip-planner)**
 2. Fill in destination, dates, budget, and travel preferences
 3. Click **Generate Smart Itinerary**
-4. Wait **20–30 seconds** for results — a loading screen appears while data is fetched
+4. Wait **1–2 minutes** for results — a loading screen appears while data is fetched
 
 Or visit the **[Live Website](https://smart-tripplanner.netlify.app)** and navigate from the home page.
 
