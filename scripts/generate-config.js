@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const googleKey = process.env.GOOGLE_API_KEY || '';
-const weatherKey = process.env.WEATHER_API_KEY || '';
+const googleKey = (process.env.GOOGLE_API_KEY || '').trim();
+const weatherKey = (process.env.WEATHER_API_KEY || '').trim();
 
 const content = `// Auto-generated at build time — do not commit
 window.API_CONFIG = {
